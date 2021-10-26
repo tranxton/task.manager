@@ -122,7 +122,7 @@ class Kernel extends Container
         $router = new Router(
             new YamlFileLoader(new FileLocator($this->base_path)),
             "routes.yml",
-//            ['cache_dir' => $this->base_path . '/cache/routes']
+            ['cache_dir' => $this->base_path . '/cache/routes']
         );
         $router->setContext((new RequestContext())->fromRequest($request));
 

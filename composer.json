@@ -1,7 +1,7 @@
 {
-    "name": "rustem/beejee.test",
+    "name": "rustem/task.manager",
     "type": "project",
-    "description": "Тестовое задание  BeeJee",
+    "description": "Тестовое задание 'Менеджер задач'",
     "require": {
         "php": "^8.0",
         "illuminate/database": "^8.0",
