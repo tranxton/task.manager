@@ -1,0 +1,56 @@
+index:
+  path: /
+  controller: \App\Controller\TaskController
+  methods: ['GET']
+  defaults: { _action: 'list' }
+
+task_show_form:
+  path: /task
+  controller: \App\Controller\TaskController
+  methods: [ 'GET' ]
+  defaults: { _action: 'showForm' }
+
+task_create:
+  path: /task/create
+  controller: \App\Controller\TaskController
+  methods: [ 'POST' ]
+  defaults: { _action: 'create' }
+
+task_edit:
+  path: /task/edit
+  controller: \App\Controller\TaskController
+  methods: [ 'POST' ]
+  defaults: { _action: 'edit' }
+
+login_form:
+  path: /login
+  controller: \App\Controller\UserController
+  methods: ['GET']
+  defaults: { _action: 'getForm' }
+
+login:
+  path: /login
+  controller: \App\Controller\UserController
+  methods: ['POST']
+  defaults: { _action: 'login' }
+
+logout:
+  path: /logout
+  controller: \App\Controller\UserController
+  methods: ['GET']
+  defaults: { _action: 'logout' }
+
+404:
+  path: /404
+  methods: ['GET']
+  defaults: { _view: 'error.404' }
+
+405:
+  path: /405
+  methods: ['GET']
+  defaults: { _view: 'error.405' }
+
+500:
+  path: /500
+  methods: ['GET']
+  defaults: { _view: 'error.500' }
