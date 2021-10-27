@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Kernel;
 use App\Model\User;
 use App\Repository\UserRepository;
 use Jenssegers\Blade\Blade;
@@ -21,19 +20,19 @@ class Controller
     protected $user;
 
     /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * @var Blade
      */
     private $blade;
 
-    /**
-     * @var Kernel
-     */
-    private $kernel;
-
-    public function __construct(Kernel $kernel, Blade $blade)
+    public function __construct(Blade $blade, Request $request)
     {
-        $this->kernel = $kernel;
         $this->blade = $blade;
+        $this->request = $request;
         $this->user = $this->getUser();
     }
 
@@ -67,9 +66,9 @@ class Controller
     /**
      * Creates redirect response
      *
-     * @param string $url
-     * @param int $status
-     * @param array $headers
+     * @param string        $url
+     * @param int           $status
+     * @param array         $headers
      * @param array<Cookie> $cookies
      *
      * @return Response
@@ -89,10 +88,10 @@ class Controller
     /**
      * Creates redirect response with errors
      *
-     * @param string $url
-     * @param array  $messages
-     * @param int $status
-     * @param array $headers
+     * @param string        $url
+     * @param array         $messages
+     * @param int           $status
+     * @param array         $headers
      * @param array<Cookie> $cookies
      *
      * @return Response
@@ -104,7 +103,7 @@ class Controller
         array $headers = [],
         array $cookies = []
     ): Response {
-        $bag = $this->kernel->get(Request::class)->getSession()->getFlashBag();
+        $bag = $this->request->getSession()->getFlashBag();
         $bag->setAll($messages);
 
         return $this->redirect($url, $status, $headers, $cookies);
@@ -117,12 +116,7 @@ class Controller
      */
     protected function getMessages(): array
     {
-        /**
-         * @var Request $request
-         */
-        $request = $this->kernel->get(Request::class);
-
-        return $request->getSession()->getFlashBag()->all();
+        return $this->request->getSession()->getFlashBag()->all();
     }
 
     /**
@@ -132,11 +126,7 @@ class Controller
      */
     private function getUser(): ?User
     {
-        /**
-         * @var Request $request
-         */
-        $request = $this->kernel->get(Request::class);
-        if (($token = $request->cookies->get('token')) === null) {
+        if (($token = $this->request->cookies->get('token')) === null) {
             return null;
         }
 

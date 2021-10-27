@@ -6,7 +6,6 @@ namespace App\Controller;
 
 use App\Repository\TaskRepository;
 use Rakit\Validation\Validator;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
@@ -14,13 +13,11 @@ class TaskController extends Controller
     /**
      * Form for task creating/editing
      *
-     * @param Request $request
-     *
      * @return Response
      */
-    public function showForm(Request $request): Response
+    public function showForm(): Response
     {
-        $id = (int) $request->get('id');
+        $id = (int) $this->request->get('id');
         $task = null;
         if ($id !== 0) {
             $task = TaskRepository::get($id);
@@ -59,16 +56,14 @@ class TaskController extends Controller
     /**
      * Task creating
      *
-     * @param Request $request
-     *
      * @return Response
      */
-    public function create(Request $request): Response
+    public function create(): Response
     {
         $fields = [
-            'name'        => (string) $request->get('name'),
-            'email'       => (string) $request->get('email'),
-            'description' => (string) $request->get('description'),
+            'name'        => (string) $this->request->get('name'),
+            'email'       => (string) $this->request->get('email'),
+            'description' => (string) $this->request->get('description'),
         ];
         $rules = [
             'name'        => 'required|min:1|max:30',
@@ -94,19 +89,17 @@ class TaskController extends Controller
     /**
      * Task editing
      *
-     * @param Request $request
-     *
      * @return Response
      */
-    public function edit(Request $request): Response
+    public function edit(): Response
     {
         if ($this->user === null) {
             return $this->redirectWithMessages('/login', ['message' => 'Требуется авторизация']);
         }
         $fields = [
-            'id'          => (int) $request->get('id'),
-            'description' => (string) $request->get('description'),
-            'is_done'     => (bool) $request->get('is_done'),
+            'id'          => (int) $this->request->get('id'),
+            'description' => (string) $this->request->get('description'),
+            'is_done'     => (bool) $this->request->get('is_done'),
         ];
         $rules = [
             'id'          => 'required|integer|min:1',
@@ -144,14 +137,12 @@ class TaskController extends Controller
     /**
      * Get list of tasks
      *
-     * @param Request $request
-     *
      * @return Response
      * @throws \Exception
      */
-    public function list(Request $request): Response
+    public function list(): Response
     {
-        $current_page = $this->getCurrentPageNumber($request);
+        $current_page = $this->getCurrentPageNumber();
         $data = [
             'title'      => 'Список задач',
             'user'       => $this->user,
@@ -166,14 +157,12 @@ class TaskController extends Controller
     /**
      * Returns current page number
      *
-     * @param Request $request
-     *
      * @return int
      * @throws \Exception
      */
-    private function getCurrentPageNumber(Request $request): int
+    private function getCurrentPageNumber(): int
     {
-        $current_page = $request->get('page') ?? 1;
+        $current_page = $this->request->get('page') ?? 1;
         if (!is_numeric($current_page)) {
             throw new \Exception('Page must be a number');
         }

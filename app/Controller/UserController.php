@@ -7,8 +7,6 @@ namespace App\Controller;
 use App\Model\User;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
@@ -16,11 +14,9 @@ class UserController extends Controller
     /**
      * Shows login form
      *
-     * @param Request $request
-     *
      * @return Response
      */
-    public function getForm(Request $request): Response
+    public function getForm(): Response
     {
         if($this->user !== null) {
             return $this->redirect('/');
@@ -37,14 +33,12 @@ class UserController extends Controller
     /**
      * Authorization
      *
-     * @param Request $request
-     *
      * @return Response
      */
-    public function login(Request $request): Response
+    public function login(): Response
     {
-        $login = (string) $request->get('login');
-        $password = (string) $request->get('password');
+        $login = (string) $this->request->get('login');
+        $password = (string) $this->request->get('password');
 
         if (empty($login) || empty($password)) {
             return $this->redirectWithMessages(
@@ -85,11 +79,9 @@ class UserController extends Controller
     /**
      * Logouts user
      *
-     * @param Request $request
-     *
      * @return Response
      */
-    public function logout(Request $request): Response
+    public function logout(): Response
     {
         if ($this->user === null) {
             return $this->redirectWithMessages('/login', ['message' => 'Требуется авторизация']);
