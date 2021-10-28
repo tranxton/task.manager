@@ -68,7 +68,7 @@ class TaskController extends Controller
         ];
         $rules = [
             'name'        => 'required|min:1|max:30',
-            'email'       => 'required|min:1|max:30',
+            'email'       => 'required|email|max:30',
             'description' => 'required|min:1|max:255',
         ];
         $validator = (new Validator())->validate($fields, $rules);

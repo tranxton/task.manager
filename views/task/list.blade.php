@@ -31,8 +31,14 @@
                     @foreach($tasks as $task)
                         <tr>
                             <td>{{ $task->id }}</td>
-                            <td>{{ $task->name }} @if($task->is_done)<span
-                                        class="badge bg-info text-dark">Выполнена</span>@endif</td>
+                            <td>{{ $task->name }}
+                                @if($task->is_done)
+                                    <span class="badge bg-info text-dark">Выполнена</span>
+                                @endif
+                                @isset($task->updated_by)
+                                    <span class="badge bg-info text-dark">Отредактирована Администратором</span>
+                                @endif
+                            </td>
                             <td>{{ $task->description }}</td>
                             <td>{{ $task->email }}</td>
                             <td>
