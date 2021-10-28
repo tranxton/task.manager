@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Model\Task;
 use App\Repository\TaskRepository;
 use Rakit\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
@@ -143,12 +144,18 @@ class TaskController extends Controller
     public function list(): Response
     {
         $current_page = $this->getCurrentPageNumber();
+        $select_sorting = $this->getSelectedSorting();
+
         $data = [
             'title'      => 'Список задач',
             'user'       => $this->user,
             'messages'   => $this->getMessages(),
-            'tasks'      => TaskRepository::getListByPageNumber($current_page),
+            'tasks'      => TaskRepository::getList($current_page, $select_sorting),
             'pagination' => TaskRepository::getPagination($current_page),
+            'sorting'    => [
+                'selected' => $select_sorting,
+                'list'     => Task::getAvailableSortsList(),
+            ],
         ];
 
         return $this->view('task.list', $data);
@@ -171,5 +178,24 @@ class TaskController extends Controller
         }
 
         return (int) $current_page;
+    }
+
+    /**
+     * Returns selected by user or default sort type
+     *
+     * @return array
+     * @throws \Exception
+     */
+    private function getSelectedSorting(): array
+    {
+        $default_sort = Task::DEFAULT_SORT;
+        $selected_sort = $this->request->get('sort');
+        if ($selected_sort === null) {
+            return $default_sort;
+        }
+
+        $exploded = explode(':', $selected_sort);
+
+        return ['field' => $exploded[0] ?? '', 'type' => $exploded[1] ?? ''];
     }
 }

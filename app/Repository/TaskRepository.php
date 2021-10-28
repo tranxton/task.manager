@@ -62,14 +62,22 @@ class TaskRepository
     /**
      * Returns list of tasks by page number
      *
-     * @param int $number
+     * @param int   $pagination
+     * @param array $sorting
      *
      * @return Collection
      */
-    public static function getListByPageNumber(int $number): Collection
+    public static function getList(int $pagination, array $sorting): Collection
     {
         $per_page = (new Task())->getPerPage();
-        return Task::where('id', '>=', self::getFirstRowIdByPageNumber($number))->limit($per_page)->get();
+        $skip = self::getFirstRowIdByPageNumber($pagination);
+        [$sort_by_field, $sort_type] = Task::validateSorting($sorting);
+
+        return Task::select()
+            ->orderBy($sort_by_field, $sort_type)
+            ->skip($skip)
+            ->take($per_page)
+            ->get();
     }
 
     /**
@@ -89,8 +97,9 @@ class TaskRepository
         $number_of_pages = (int) ceil($rows_num / $per_page);
 
         return [
-            'prev' => $prev_page_number >= 1 ? $prev_page_number : null,
-            'next' => $next_page_number <= $number_of_pages ? $next_page_number : null,
+            'current' => $current_page_number,
+            'prev'    => $prev_page_number >= 1 ? $prev_page_number : null,
+            'next'    => $next_page_number <= $number_of_pages ? $next_page_number : null,
         ];
     }
 
@@ -109,6 +118,7 @@ class TaskRepository
             $start_from = $number * $per_page - ($per_page - 1);
         }
 
-        return $start_from;
+        return $start_from - 1;
     }
+
 }
