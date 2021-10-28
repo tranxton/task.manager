@@ -70,7 +70,7 @@ class TaskRepository
     public static function getList(int $pagination, array $sorting): Collection
     {
         $per_page = (new Task())->getPerPage();
-        $skip = self::getFirstRowIdByPageNumber($pagination);
+        $skip = ($pagination * $per_page) - $per_page;
         [$sort_by_field, $sort_type] = Task::validateSorting($sorting);
 
         return Task::select()
@@ -102,23 +102,4 @@ class TaskRepository
             'next'    => $next_page_number <= $number_of_pages ? $next_page_number : null,
         ];
     }
-
-    /**
-     * Returns the first task's ID of passed page number
-     *
-     * @param int $number
-     *
-     * @return int
-     */
-    private static function getFirstRowIdByPageNumber(int $number): int
-    {
-        $per_page = (new Task())->getPerPage();
-        $start_from = $number;
-        if ($number !== 1) {
-            $start_from = $number * $per_page - ($per_page - 1);
-        }
-
-        return $start_from - 1;
-    }
-
 }
